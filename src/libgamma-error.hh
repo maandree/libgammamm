@@ -21,11 +21,7 @@
 
 #include <string>
 
-extern "C"
-{
-# include <libgamma-config.h>
-# include <libgamma-error.h>
-}
+#include "libgamma-native.hh"
 
 
 namespace libgamma
