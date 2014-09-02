@@ -29,6 +29,7 @@ extern "C"
 # define this self
 # include <libgamma.h>
 # undef this
+# undef restrict
 }
 
 

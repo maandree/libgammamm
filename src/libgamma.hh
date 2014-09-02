@@ -20,6 +20,7 @@
 
 
 #include "libgamma-error.hh"
+#include "libgamma-method.hh"
 
 
 #endif
