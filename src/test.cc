@@ -27,9 +27,11 @@ int main(void)
   libgamma::Partition* partition;
   libgamma::CRTC* crtc;
   libgamma::CRTCInformation info;
+  int method;
   
   std::string* str;
   char* cstr;
+  unsigned char* edid;
   
   libgamma::perror("test", 0);
   libgamma::perror("test", 2);
@@ -46,7 +48,50 @@ int main(void)
   delete str;
   std::cout << std::endl;
   
-  site = new libgamma::Site(LIBGAMMA_METHOD_X_RANDR, new std::string(":0"));
+  for (int m : libgamma::list_methods(0))
+    std::cout << m << " ";
+  std::cout << std::endl;
+  for (int m : libgamma::list_methods(1))
+    std::cout << m << " ";
+  std::cout << std::endl;
+  for (int m : libgamma::list_methods(2))
+    std::cout << m << " ";
+  std::cout << std::endl;
+  for (int m : libgamma::list_methods(3))
+    std::cout << m << " ";
+  std::cout << std::endl;
+  for (int m : libgamma::list_methods(4))
+    std::cout << m << " ";
+  std::cout << std::endl;
+  std::cout << std::endl;
+  method = libgamma::list_methods(0)[0];
+  
+  std::cout << libgamma::is_method_available(LIBGAMMA_METHOD_X_RANDR) << std::endl;
+  str = libgamma::method_default_site(LIBGAMMA_METHOD_X_RANDR);
+  if (str == nullptr)
+    std::cout << "(nullptr)" << std::endl;
+  else
+    std::cout << *str << std::endl;
+  delete str;
+  str = libgamma::method_default_site_variable(LIBGAMMA_METHOD_X_RANDR);
+  if (str == nullptr)
+    std::cout << "(nullptr)" << std::endl;
+  else
+    std::cout << *str << std::endl;
+  delete str;
+  std::cout << std::endl;
+  
+  edid = libgamma::unhex_edid("0123456789abcdef");
+  cstr = libgamma_behex_edid(edid, 8);
+  std::cout << cstr << std::endl;
+  free(cstr);
+  std::cout << libgamma::behex_edid(edid, 8) << std::endl;
+  std::cout << libgamma::behex_edid_lowercase(edid, 8) << std::endl;
+  std::cout << libgamma::behex_edid_uppercase(edid, 8) << std::endl;
+  free(edid);
+  std::cout << std::endl;
+  
+  site = new libgamma::Site(method, new std::string(":0"));
   std::cout << site->partitions_available << std::endl;
   partition = new libgamma::Partition(site, 0);
   std::cout << partition->crtcs_available << std::endl;
