@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <unistd.h>
 
 
 int main(void)
@@ -28,7 +29,13 @@ int main(void)
   libgamma::CRTC* crtc;
   libgamma::CRTCInformation info;
   libgamma::MethodCapabilities caps;
+  libgamma::GammaRamps<uint16_t>* ramps;
   int method;
+  size_t i;
+  
+  uint16_t* saved_red;
+  uint16_t* saved_green;
+  uint16_t* saved_blue;
   
   std::string* str;
   char* cstr;
@@ -170,6 +177,137 @@ int main(void)
   else
     std::cout << libgamma::group_name << std::endl;
   std::cout << std::endl;
+  
+  ramps = libgamma::gamma_ramps16_create(info.red_gamma_size, info.green_gamma_size, info.blue_gamma_size);
+  std::cout << ramps->red.size << " "
+	    << ramps->green.size << " "
+	    << ramps->blue.size << std::endl;
+  std::cout << ramps->depth << std::endl;
+  std::cout << std::endl;
+  
+  saved_red = new uint16_t[ramps->red.size];
+  saved_green = new uint16_t[ramps->green.size];
+  saved_blue = new uint16_t[ramps->blue.size];
+  
+  crtc->get_gamma(ramps);
+  for (i = 0; i < ramps->red.size; i++)
+    {
+      std::cout << ramps->red[i] << " ";
+      saved_red[i] = ramps->red[i];
+      ramps->red[i] /= 2; /* FIXME does not change the ramp */
+    }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  
+  crtc->get_gamma(ramps);
+  for (i = 0; i < ramps->green.size; i++)
+    {
+      std::cout << ramps->green[i] << " ";
+      saved_green[i] = ramps->green[i];
+      ramps->green[i] /= 2; /* FIXME does not change the ramp */
+    }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  
+  crtc->get_gamma(ramps);
+  for (i = 0; i < ramps->blue.size; i++)
+    {
+      std::cout << ramps->blue[i] << " ";
+      saved_blue[i] = ramps->blue[i];
+      ramps->blue[i] /= 2; /* FIXME why does this one change the ramp but why does not the other two? */
+    }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  
+  std::cout << ramps->red[ramps->red.size - 1] << " ";
+  std::cout << ramps->green[ramps->green.size - 1] << " ";
+  std::cout << ramps->blue[ramps->blue.size - 1] << std::endl;
+  std::cout << std::endl;
+  
+  crtc->set_gamma(ramps);
+  
+  sleep(1);
+  
+  for (i = 0; i < ramps->red.size; i++)
+    ramps->red[i] = saved_red[i];
+  for (i = 0; i < ramps->green.size; i++)
+    ramps->green[i] = saved_green[i];
+  for (i = 0; i < ramps->blue.size; i++)
+    ramps->blue[i] = saved_blue[i];
+  
+  crtc->set_gamma(ramps);
+  
+  delete [] saved_red;
+  delete [] saved_green;
+  delete [] saved_blue;
+  delete ramps;
+  
+  sleep(1);
+  
+  ramps = new libgamma::GammaRamps<uint16_t>();
+  libgamma::gamma_ramps16_initialise(ramps, info.red_gamma_size, info.green_gamma_size, info.blue_gamma_size);
+  std::cout << ramps->red.size << " "
+	    << ramps->green.size << " "
+	    << ramps->blue.size << std::endl;
+  std::cout << ramps->depth << std::endl;
+  std::cout << std::endl;
+  
+  saved_red = new uint16_t[ramps->red.size];
+  saved_green = new uint16_t[ramps->green.size];
+  saved_blue = new uint16_t[ramps->blue.size];
+  
+  crtc->get_gamma(ramps);
+  for (i = 0; i < ramps->red.size; i++)
+    {
+      std::cout << ramps->red[i] << " ";
+      saved_red[i] = ramps->red[i];
+      ramps->red[i] /= 2; /* FIXME does not change the ramp */
+    }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  
+  crtc->get_gamma(ramps);
+  for (i = 0; i < ramps->green.size; i++)
+    {
+      std::cout << ramps->green[i] << " ";
+      saved_green[i] = ramps->green[i];
+      ramps->green[i] /= 2; /* FIXME does not change the ramp */
+    }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  
+  crtc->get_gamma(ramps);
+  for (i = 0; i < ramps->blue.size; i++)
+    {
+      std::cout << ramps->blue[i] << " ";
+      saved_blue[i] = ramps->blue[i];
+      ramps->blue[i] /= 2; /* FIXME why does this one change the ramp but why does not the other two? */
+    }
+  std::cout << std::endl;
+  std::cout << std::endl;
+  
+  std::cout << ramps->red[ramps->red.size - 1] << " ";
+  std::cout << ramps->green[ramps->green.size - 1] << " ";
+  std::cout << ramps->blue[ramps->blue.size - 1] << std::endl;
+  std::cout << std::endl;
+  
+  crtc->set_gamma(ramps);
+  
+  sleep(1);
+  
+  for (i = 0; i < ramps->red.size; i++)
+    ramps->red[i] = saved_red[i];
+  for (i = 0; i < ramps->green.size; i++)
+    ramps->green[i] = saved_green[i];
+  for (i = 0; i < ramps->blue.size; i++)
+    ramps->blue[i] = saved_blue[i];
+  
+  crtc->set_gamma(ramps);
+  
+  delete [] saved_red;
+  delete [] saved_green;
+  delete [] saved_blue;
+  delete ramps;
   
   delete crtc;
   delete partition;
