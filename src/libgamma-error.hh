@@ -24,8 +24,28 @@
 #include "libgamma-native.hh"
 
 
+
+#ifndef __WIN32__
+# define libgamma_gid_t  gid_t
+#else
+# define libgamma_gid_t  short
+#endif
+
+
+
 namespace libgamma
 {
+  /**
+   * Class for `group_gid`.
+   */
+  class GroupGid;
+  
+  /**
+   * Class for `group_name`.
+   */
+  class GroupName;
+  
+  
   /**
    * Prints an error to stderr in a `perror` fashion,
    * however this function will not translate the `libgamma`
@@ -64,8 +84,56 @@ namespace libgamma
   int value_of_error(const std::string* name);
   
   
-  /* TODO libgamma_group_gid */
-  /* TODO libgamma_group_name */
+  /**
+   * Class for `group_gid`.
+   */
+  class GroupGid
+  {
+  public:
+    const GroupGid& operator =(const libgamma_gid_t& value) const
+    {
+      libgamma_group_gid = value;
+      return *this;
+    }
+    
+    operator libgamma_gid_t() const
+    {
+      return libgamma_group_gid;
+    }
+  };
+  
+  /**
+   * Group that the user needs to be a member of if
+   * `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
+   */
+  extern GroupGid group_gid;
+  
+  
+  /**
+   * Class for `group_name`.
+   */
+  class GroupName
+  {
+  public:
+    const GroupName& operator =(const char* value) const
+    {
+      libgamma_group_name = value;
+      return *this;
+    }
+    
+    operator char*() const
+    {
+      return (char*)libgamma_group_name;
+    }
+  };
+  
+  /** 
+   * Group that the user needs to be a member of if
+   * `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
+   * `nullptr` if the name of the group
+   * `libgamma::group_gid` cannot be determined.
+   */
+  extern GroupName group_name;
   
 }
 

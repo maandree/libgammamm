@@ -155,6 +155,22 @@ int main(void)
   std::cout << "fake: " << caps.fake << std::endl;
   std::cout << std::endl;
   
+  std::cout << libgamma::group_gid << std::endl;
+  libgamma::group_gid = 10;
+  std::cout << libgamma::group_gid << std::endl;
+  std::cout << std::endl;
+  
+  if (libgamma::group_name == nullptr)
+    std::cout << "(nullptr)" << std::endl;
+  else
+    std::cout << libgamma::group_name << std::endl;
+  libgamma::group_name = "test-group";
+  if (libgamma::group_name == nullptr)
+    std::cout << "(nullptr)" << std::endl;
+  else
+    std::cout << libgamma::group_name << std::endl;
+  std::cout << std::endl;
+  
   delete crtc;
   delete partition;
   delete site;
