@@ -27,6 +27,7 @@ int main(void)
   libgamma::Partition* partition;
   libgamma::CRTC* crtc;
   libgamma::CRTCInformation info;
+  libgamma::MethodCapabilities caps;
   int method;
   
   std::string* str;
@@ -135,6 +136,23 @@ int main(void)
   std::cout << "gamma_green: " << info.gamma_green << std::endl;
   std::cout << "gamma_blue: " << info.gamma_blue << std::endl;
   std::cout << "gamma_error: " << info.gamma_error << std::endl;
+  std::cout << std::endl;
+  
+  libgamma::method_capabilities(&caps, method);
+  std::cout << "crtc_information: " << caps.crtc_information << std::endl;
+  std::cout << "default_site_known: " << caps.default_site_known << std::endl;
+  std::cout << "multiple_sites: " << caps.multiple_sites << std::endl;
+  std::cout << "multiple_partitions: " << caps.multiple_partitions << std::endl;
+  std::cout << "multiple_crtcs: " << caps.multiple_crtcs << std::endl;
+  std::cout << "partitions_are_graphics_cards: " << caps.partitions_are_graphics_cards << std::endl;
+  std::cout << "site_restore: " << caps.site_restore << std::endl;
+  std::cout << "partition_restore: " << caps.partition_restore << std::endl;
+  std::cout << "crtc_restore: " << caps.crtc_restore << std::endl;
+  std::cout << "identical_gamma_sizes: " << caps.identical_gamma_sizes << std::endl;
+  std::cout << "fixed_gamma_size: " << caps.fixed_gamma_size << std::endl;
+  std::cout << "fixed_gamma_depth: " << caps.fixed_gamma_depth << std::endl;
+  std::cout << "real: " << caps.real << std::endl;
+  std::cout << "fake: " << caps.fake << std::endl;
   std::cout << std::endl;
   
   delete crtc;
