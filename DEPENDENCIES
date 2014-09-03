@@ -10,7 +10,7 @@ BUILD DEPENDENCIES:
 	libgamma>=0.3
 	libc++ (gcc-libc)
 	libc (glibc)
-	c++ (gcc)
+	c++11 (gcc)
 	make
 	coreutils
 
