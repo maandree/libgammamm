@@ -36,6 +36,40 @@ namespace libgamma
    */
   class MethodCapabilities;
   
+  /**
+   * Site state.
+   * 
+   * On operating systems that integrate a graphical environment
+   * there is usually just one site. However, one systems with
+   * pluggable graphics, like Unix-like systems such as GNU/Linux
+   * and the BSD:s, there can usually be any (feasible) number of
+   * sites. In X.org parlance they are called displays.
+   */
+  class Site;
+  
+  /**
+   * Partition state.
+   * 
+   * Probably the majority of display server only one partition
+   * per site. However, X.org can, and traditional used to have
+   * on multi-headed environments, multiple partitions per site.
+   * In X.org partitions are called 'screens'. It is not to be
+   * confused with monitor. A screen is a collection of monitors,
+   * and the mapping from monitors to screens is a surjection.
+   * On hardware-level adjustment methods, such as Direct
+   * Rendering Manager, a partition is a graphics card.
+   */
+  class Partition;
+  
+  /**
+   * Cathode ray tube controller state.
+   * 
+   * The CRTC controls the gamma ramps for the
+   * monitor that is plugged in to the connector
+   * that the CRTC belongs to.
+   */
+  class CRTC;
+  
   
   
   /**
@@ -52,7 +86,7 @@ namespace libgamma
     /**
      * Constructor.
      * 
-     * @param  caps  The information in the native structure
+     * @param  caps  The information in the native structure.
      */
     MethodCapabilities(libgamma_method_capabilities_t* caps);
     
@@ -187,7 +221,7 @@ namespace libgamma
     /**
      * Constructor.
      * 
-     * @param  info  The information in the native structure
+     * @param  info  The information in the native structure.
      */
     CRTCInformation(libgamma_crtc_information_t* info);
     
@@ -459,7 +493,225 @@ namespace libgamma
     int gamma_error;
     
   };
-
+  
+  
+  
+#ifdef __GCC__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Weffc++"
+  /* Lets ignore that we do not override the copy constructor
+   * and the copy operator. */
+#endif
+  
+  /**
+   * Site state.
+   * 
+   * On operating systems that integrate a graphical environment
+   * there is usually just one site. However, one systems with
+   * pluggable graphics, like Unix-like systems such as GNU/Linux
+   * and the BSD:s, there can usually be any (feasible) number of
+   * sites. In X.org parlance they are called displays.
+   */
+  class Site
+  {
+  public:
+    /**
+     * Constructor.
+     */
+    Site();
+    
+    /**
+     * Constructor.
+     * 
+     * @param  method  The adjustment method of the site.
+     * @param  site    The site identifier, will be moved into
+     *                 the structure, must be `delete`:able.
+     */
+    Site(int method, std::string* site = nullptr);
+    
+    /**
+     * Destructor.
+     */
+    ~Site();
+    
+    /**
+     * Restore the gamma ramps all CRTC:s with a site to
+     * the system settings.
+     */
+    void restore();
+    
+    
+    
+    /**
+     * This field specifies, for the methods if this library,
+     * which adjustment method (display server and protocol)
+     * is used to adjust the gamma ramps.
+     */
+    int method;
+    
+    /**
+     * The site identifier. It can either be `nullptr` or a string.
+     * `nullptr` indicates the default site. On systems like the
+     * Unix-like systems, where the graphics are pluggable, this
+     * is usually resolved by an environment variable, such as
+     * "DISPLAY" for X.org.
+     */
+    std::string* site;
+    
+    /**
+     * The number of partitions that is available on this site.
+     * Probably the majority of display server only one partition
+     * per site. However, X.org can, and traditional used to have
+     * on multi-headed environments, multiple partitions per site.
+     * In X.org partitions are called 'screens'. It is not to be
+     * confused with monitor. A screen is a collection of monitors,
+     * and the mapping from monitors to screens is a surjection.
+     * On hardware-level adjustment methods, such as Direct
+     * Rendering Manager, a partition is a graphics card.
+     */
+    size_t partitions_available;
+    
+    /**
+     * The state in the native structure.
+     */
+    libgamma_site_state_t* native;
+    
+  };
+  
+  
+  
+  /**
+   * Partition state.
+   * 
+   * Probably the majority of display server only one partition
+   * per site. However, X.org can, and traditional used to have
+   * on multi-headed environments, multiple partitions per site.
+   * In X.org partitions are called 'screens'. It is not to be
+   * confused with monitor. A screen is a collection of monitors,
+   * and the mapping from monitors to screens is a surjection.
+   * On hardware-level adjustment methods, such as Direct
+   * Rendering Manager, a partition is a graphics card.
+   */
+  class Partition
+  {
+  public:
+    /**
+     * Constructor.
+     */
+    Partition();
+    
+    /**
+     * Constructor.
+     * 
+     * @param  site       The site of the partition.
+     * @param  partition  The index of the partition.
+     */
+    Partition(Site* site, size_t partition);
+    
+    /**
+     * Destructor.
+     */
+    ~Partition();
+    
+    /**
+     * Restore the gamma ramps all CRTC:s with a partition
+     * to the system settings.
+     */
+    void restore();
+    
+    
+    
+    /**
+     * The site this partition belongs to.
+     */
+    Site* site;
+    
+    /**
+     * The index of the partition.
+     */
+    size_t partition;
+    
+    /**
+     * The number of CRTC:s that are available under this
+     * partition. Note that the CRTC:s are not necessarily
+     * online.
+     */
+    size_t crtcs_available;
+    
+    /**
+     * The state in the native structure.
+     */
+    libgamma_partition_state_t* native;
+    
+  };
+  
+  
+  
+  /**
+   * Cathode ray tube controller state.
+   * 
+   * The CRTC controls the gamma ramps for the
+   * monitor that is plugged in to the connector
+   * that the CRTC belongs to.
+   */
+  class CRTC
+  {
+  public:
+    /**
+     * Constructor.
+     */
+    CRTC();
+    
+    /**
+     * Constructor.
+     * 
+     * @param  partition  The partition of the CRTC.
+     * @param  crtc       The index of the CRTC.
+     */
+    CRTC(Partition* partition, size_t crtc);
+    
+    /**
+     * Destructor.
+     */
+    ~CRTC();
+    
+    /**
+     * Restore the gamma ramps for a CRTC to the system
+     * settings for that CRTC.
+     */
+    void restore();
+    
+    /**
+     * Read information about a CRTC.
+     * 
+     * @param   output  Instance of a data structure to fill with the information about the CRTC.
+     * @param   fields  OR:ed identifiers for the information about the CRTC that should be read.
+     * @return          Whether an error has occurred and is stored in a `*_error` field.
+     */
+    bool information(CRTCInformation* output, int32_t fields);
+    
+    
+    
+    /**
+     * The partition this CRTC belongs to.
+     */
+    Partition* partition;
+    
+    /**
+     * The index of the CRTC within its partition.
+     */
+    size_t crtc;
+    
+    /**
+     * The state in the native structure.
+     */
+    libgamma_crtc_state_t* native;
+    
+  };
+  
+#ifdef __GCC__
+# pragma GCC diagnostic pop
+#endif
   
 }
 

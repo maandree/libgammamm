@@ -18,11 +18,18 @@
 #include "libgamma.hh"
 
 #include <iostream>
+#include <cstdlib>
 
 
 int main(void)
 {
+  libgamma::Site* site;
+  libgamma::Partition* partition;
+  libgamma::CRTC* crtc;
+  libgamma::CRTCInformation info;
+  
   std::string* str;
+  char* cstr;
   
   libgamma::perror("test", 0);
   libgamma::perror("test", 2);
@@ -38,6 +45,56 @@ int main(void)
   std::cout << libgamma::value_of_error(str) << std::endl;
   delete str;
   std::cout << std::endl;
+  
+  site = new libgamma::Site(LIBGAMMA_METHOD_X_RANDR, new std::string(":0"));
+  std::cout << site->partitions_available << std::endl;
+  partition = new libgamma::Partition(site, 0);
+  std::cout << partition->crtcs_available << std::endl;
+  crtc = new libgamma::CRTC(partition, 0);
+  std::cout << crtc->information(&info, ~0) << std::endl;
+  std::cout << std::endl;
+  
+  cstr = libgamma_behex_edid(info.edid, info.edid_length);
+  std::cout << "edid: " << cstr << std::endl;
+  free(cstr);
+  std::cout << "edid_length: " << info.edid_length << std::endl;
+  std::cout << "edid_error: " << info.edid_error << std::endl;
+  std::cout << "width_mm: " << info.width_mm << std::endl;
+  std::cout << "width_mm_error: " << info.width_mm_error << std::endl;
+  std::cout << "height_mm: " << info.height_mm << std::endl;
+  std::cout << "height_mm_error: " << info.height_mm_error << std::endl;
+  std::cout << "width_mm_edid: " << info.width_mm_edid << std::endl;
+  std::cout << "width_mm_edid_error: " << info.width_mm_edid_error << std::endl;
+  std::cout << "height_mm_edid: " << info.height_mm_edid << std::endl;
+  std::cout << "height_mm_edid_error: " << info.height_mm_edid_error << std::endl;
+  std::cout << "red_gamma_size: " << info.red_gamma_size << std::endl;
+  std::cout << "green_gamma_size: " << info.green_gamma_size << std::endl;
+  std::cout << "blue_gamma_size: " << info.blue_gamma_size << std::endl;
+  std::cout << "gamma_size_error: " << info.gamma_size_error << std::endl;
+  std::cout << "gamma_depth: " << info.gamma_depth << std::endl;
+  std::cout << "gamma_depth_error: " << info.gamma_depth_error << std::endl;
+  std::cout << "gamma_support: " << info.gamma_support << std::endl;
+  std::cout << "gamma_support_error: " << info.gamma_support_error << std::endl;
+  std::cout << "subpixel_order: " << info.subpixel_order << std::endl;
+  std::cout << "subpixel_order_error: " << info.subpixel_order_error << std::endl;
+  std::cout << "active: " << info.active << std::endl;
+  std::cout << "active_error: " << info.active_error << std::endl;
+  if (info.connector_name == nullptr)
+    std::cout << "connector_name: " << "(nullptr)" << std::endl;
+  else
+    std::cout << "connector_name: " << *(info.connector_name) << std::endl;
+  std::cout << "connector_name_error: " << info.connector_name_error << std::endl;
+  std::cout << "connector_type: " << info.connector_type << std::endl;
+  std::cout << "connector_type_error: " << info.connector_type_error << std::endl;
+  std::cout << "gamma_red: " << info.gamma_red << std::endl;
+  std::cout << "gamma_green: " << info.gamma_green << std::endl;
+  std::cout << "gamma_blue: " << info.gamma_blue << std::endl;
+  std::cout << "gamma_error: " << info.gamma_error << std::endl;
+  std::cout << std::endl;
+  
+  delete crtc;
+  delete partition;
+  delete site;
   
   return 0;
 }

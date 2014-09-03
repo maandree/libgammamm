@@ -19,6 +19,17 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <cerrno>
+
+
+/**
+ * TODO temporary
+ */
+std::string create_error(int error_code)
+{
+  (void) error_code;
+  return nullptr;
+}
 
 
 namespace libgamma
@@ -49,7 +60,7 @@ namespace libgamma
   /**
    * Constructor.
    * 
-   * @param  caps  The information in the native structure
+   * @param  caps  The information in the native structure.
    */
   MethodCapabilities::MethodCapabilities(libgamma_method_capabilities_t* caps) :
     crtc_information(caps->crtc_information),
@@ -177,7 +188,7 @@ namespace libgamma
   /**
    * Constructor.
    * 
-   * @param  info  The information in the native structure
+   * @param  info  The information in the native structure.
    */
   CRTCInformation::CRTCInformation(libgamma_crtc_information_t* info) :
     edid(info->edid),
@@ -327,6 +338,214 @@ namespace libgamma
       this->connector_name = new std::string(*(other.connector_name));
     
     return *this;
+  }
+  
+  
+  
+  /**
+   * Constructor.
+   */
+  Site::Site() :
+    method(0),
+    site(nullptr),
+    partitions_available(0),
+    native(nullptr)
+  {
+    /* Do nothing. */
+  }
+  
+  /**
+   * Constructor.
+   * 
+   * @param  method  The adjustment method of the site.
+   * @param  site    The site identifier, will be moved into
+   *                 the structure, must be `delete`:able.
+   */
+  Site::Site(int method, std::string* site) :
+    method(method),
+    site(site),
+    partitions_available(0),
+    native(nullptr)
+  {
+    char* cstr = nullptr;
+    int r;
+    
+    if (site != nullptr)
+      {
+	const char* cstr_ = site->c_str();
+	cstr = (char*)malloc((strlen(cstr_) + 1) * sizeof(char));
+	memcpy(cstr, cstr_, (strlen(cstr_) + 1) * sizeof(char));
+      }
+    this->native = (libgamma_site_state_t*)malloc(sizeof(libgamma_site_state_t));
+    r = libgamma_site_initialise(this->native, method, cstr);
+    if (r < 0)
+      {
+	int saved_errno = errno;
+	free(this->native);
+	this->native = nullptr;
+	errno = saved_errno;
+	throw create_error(r);
+      }
+    this->partitions_available = this->native->partitions_available;
+  }
+  
+  /**
+   * Destructor.
+   */
+  Site::~Site()
+  {
+    if (this->site != nullptr)
+      delete this->site;
+    if (this->native != nullptr)
+      libgamma_site_free(this->native);
+  }
+  
+  /**
+   * Restore the gamma ramps all CRTC:s with a site to
+   * the system settings.
+   */
+  void Site::restore()
+  {
+    int r;
+    r = libgamma_site_restore(this->native);
+    if (r != 0)
+      throw create_error(r);
+  }
+  
+  
+  
+  /**
+   * Constructor.
+   */
+  Partition::Partition() :
+    site(nullptr),
+    partition(0),
+    crtcs_available(0),
+    native(nullptr)
+  {
+    /* Do nothing. */
+  }
+  
+  /**
+   * Constructor.
+   * 
+   * @param  site       The site of the partition.
+   * @param  partition  The index of the partition.
+   */
+  Partition::Partition(Site* site, size_t partition) :
+    site(site),
+    partition(partition),
+    crtcs_available(0),
+    native(nullptr)
+  {
+    int r;
+    this->native = (libgamma_partition_state_t*)malloc(sizeof(libgamma_partition_state_t));
+    r = libgamma_partition_initialise(this->native, site->native, partition);
+    if (r < 0)
+      {
+	int saved_errno = errno;
+	free(this->native);
+	this->native = nullptr;
+	errno = saved_errno;
+	throw create_error(r);
+      }
+    this->crtcs_available = this->native->crtcs_available;
+  }
+  
+  /**
+   * Destructor.
+   */
+  Partition::~Partition()
+  {
+    if (this->native != nullptr)
+      libgamma_partition_free(this->native);
+  }
+  
+  /**
+   * Restore the gamma ramps all CRTC:s with a partition
+   * to the system settings.
+   */
+  void Partition::restore()
+  {
+    int r;
+    r = libgamma_partition_restore(this->native);
+    if (r != 0)
+      throw create_error(r);
+  }
+  
+  
+  
+  /**
+   * Constructor.
+   */
+  CRTC::CRTC() :
+    partition(nullptr),
+    crtc(0),
+    native(nullptr)
+  {
+    /* Do nothing. */
+  }
+  
+  /**
+   * Constructor.
+   * 
+   * @param  partition  The partition of the CRTC.
+   * @param  crtc       The index of the CRTC.
+   */
+  CRTC::CRTC(Partition* partition, size_t crtc) :
+    partition(partition),
+    crtc(crtc),
+    native(nullptr)
+  {
+    int r;
+    this->native = (libgamma_crtc_state_t*)malloc(sizeof(libgamma_crtc_state_t));
+    r = libgamma_crtc_initialise(this->native, partition->native, crtc);
+    if (r < 0)
+      {
+	int saved_errno = errno;
+	free(this->native);
+	this->native = nullptr;
+	errno = saved_errno;
+	throw create_error(r);
+      }
+  }
+  
+  /**
+   * Destructor.
+   */
+  CRTC::~CRTC()
+  {
+    if (this->native != nullptr)
+      libgamma_crtc_free(this->native);
+  }
+  
+  /**
+   * Restore the gamma ramps for a CRTC to the system
+   * settings for that CRTC.
+   */
+  void CRTC::restore()
+  {
+    int r;
+    r = libgamma_crtc_restore(this->native);
+    if (r != 0)
+      throw create_error(r);
+  }
+  
+  /**
+   * Read information about a CRTC.
+   * 
+   * @param   output  Instance of a data structure to fill with the information about the CRTC.
+   * @param   fields  OR:ed identifiers for the information about the CRTC that should be read.
+   * @return          Whether an error has occurred and is stored in a `*_error` field.
+   */
+  bool CRTC::information(CRTCInformation* output, int32_t fields)
+  {
+    libgamma_crtc_information_t info;
+    int r;
+    
+    r = libgamma_get_crtc_information(&info, this->native, fields);
+    *output = CRTCInformation(&info);
+    return r != 0;
   }
   
 }
