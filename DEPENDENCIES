@@ -1,0 +1,22 @@
+RUNTIME DEPENDENCIES:
+
+	libgamma>=0.3
+	libc++ (gcc-libc)
+	libc (glibc)
+
+
+BUILD DEPENDENCIES:
+
+	libgamma>=0.3
+	libc++ (gcc-libc)
+	libc (glibc)
+	c++ (gcc)
+	make
+	coreutils
+
+
+INSTALL DEPENDENCIES:
+
+	make
+	coreutils
+
