@@ -16,7 +16,9 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "libgamma-error.hh"
+
 #include <iostream>
+#include <cstring>
 
 
 namespace libgamma
@@ -71,6 +73,53 @@ namespace libgamma
     if (name != nullptr)
       cstr = name->c_str();
     return libgamma_value_of_error(cstr);
+  }
+  
+  
+  /**
+   * Constructor.
+   * 
+   * @param  error_code  The error code.
+   */
+  LibgammaException::LibgammaException(int error_code) throw() :
+    error_code(error_code)
+  {
+    /* Do nothing. */
+  }
+  
+  /**
+   * Destructor.
+   */
+  LibgammaException::~LibgammaException() throw()
+  {
+    /* Do nothing. */
+  }
+  
+  /**
+   * Get the error as a string.
+   */
+  const char* LibgammaException::what() const throw()
+  {
+    if (this->error_code < 0)
+      return libgamma_name_of_error(this->error_code);
+    else
+      return strerror(this->error_code);
+  }
+  
+  
+  /**
+   * Create an exception from an error code
+   * that may come from `errno.h` or be a
+   * `libgamma` error code.
+   * 
+   * @param   error_code  The error code.
+   * @return              The error object.
+   */
+  LibgammaException create_error(int error_code)
+  {
+    if (error_code == LIBGAMMA_ERRNO_SET)
+      error_code = errno;
+    return LibgammaException(error_code);
   }
   
 }

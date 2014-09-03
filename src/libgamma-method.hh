@@ -20,8 +20,10 @@
 
 
 #include <string>
+#include <cstdlib>
 
 #include "libgamma-native.hh"
+#include "libgamma-error.hh"
 
 
 namespace libgamma
@@ -504,6 +506,145 @@ namespace libgamma
 #endif
   
   /**
+   * One single Gamma ramp.
+   */
+  template <typename T>
+  class Ramp
+  {
+  public:
+    /**
+     * Constructor.
+     * 
+     * @param  ramp  The ramp.
+     * @param  size  The size of the ramp.
+     */
+    Ramp(T* ramp, size_t size)
+    {
+      this->ramp = ramp;
+      this->size = size;
+    }
+    
+    /**
+     * Destructor.
+     */
+    ~Ramp()
+    {
+      /* Do nothing */
+    }
+    
+    /**
+     * Subscript operator.
+     * 
+     * @param   index  The index of the stop to set or get.
+     * @return         A reference to the stop's value.
+     */
+    T& operator [](size_t index)
+    {
+      return this->ramp[index];
+    }
+    
+    /**
+     * Subscript operator.
+     * 
+     * @param   index  The index of the stop to get.
+     * @return         The value of the stop.
+     */
+    const T& operator [](size_t index) const
+    {
+      return this->ramp[index];
+    }
+    
+    
+    
+    /**
+     * The size of the ramp.
+     */
+    size_t size;
+    
+    /**
+     * The ramp (internal data).
+     */
+    T* ramp;
+    
+  };
+  
+  
+  /**
+   * Gamma ramp structure.
+   */
+  template <typename T>
+  class GammaRamps
+  {
+  public:
+    /**
+     * Constructor.
+     */
+    GammaRamps() :
+      red(Ramp<T>(nullptr, 0)),
+      green(Ramp<T>(nullptr, 0)),
+      blue(Ramp<T>(nullptr, 0)),
+      depth(0)
+    {
+      /* Do nothing. */
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * @param  red         The red gamma ramp.
+     * @param  green       The green gamma ramp.
+     * @param  blue        The blue gamma ramp.
+     * @param  red_size    The size of the gamma ramp for the red channel.
+     * @param  green_size  The size of the gamma ramp for the green channel.
+     * @param  blue_size   The size of the gamma ramp for the blue channel.
+     * @param  depth       The bit-depth of the gamma ramps, -1 for single precision
+     *                     floating point, and -2 for double precision floating point.
+     */
+    GammaRamps(T* red, T* green, T* blue, size_t red_size, size_t green_size, size_t blue_size, signed depth) :
+      red(Ramp<T>(red, red_size)),
+      green(Ramp<T>(green, green_size)),
+      blue(Ramp<T>(blue, blue_size)),
+      depth(depth)
+    {
+      /* Do nothing. */
+    }
+    
+    /**
+     * Destructor.
+     */
+    ~GammaRamps()
+    {
+      free(this->red.ramp);
+    }
+    
+    
+    
+    /**
+     * The red gamma ramp.
+     */
+    Ramp<T> red;
+    
+    /**
+     * The green gamma ramp.
+     */
+    Ramp<T> green;
+    
+    /**
+     * The blue gamma ramp.
+     */
+    Ramp<T> blue;
+    
+    /**
+     * The bit-depth of the gamma ramps, -1 for single precision
+     * floating point, and -2 for double precision floating point.
+     */
+    signed depth;
+    
+  };
+  
+  
+  
+  /**
    * Site state.
    * 
    * On operating systems that integrate a graphical environment
@@ -689,6 +830,156 @@ namespace libgamma
      * @return          Whether an error has occurred and is stored in a `*_error` field.
      */
     bool information(CRTCInformation* output, int32_t fields);
+    
+#define __LIBGAMMA_GET_GAMMA(AFFIX)						\
+    libgamma_gamma_ramps ## AFFIX ## _t native;					\
+    int r;									\
+    native.red = ramps->red.ramp;						\
+    native.green = ramps->green.ramp;						\
+    native.blue = ramps->blue.ramp;						\
+    native.red_size = ramps->red.size;						\
+    native.green_size = ramps->green.size;					\
+    native.blue_size = ramps->blue.size;					\
+    r = libgamma_crtc_get_gamma_ramps ## AFFIX(this->native, &native);		\
+    if (r != 0)									\
+      throw create_error(r)
+    
+    /**
+     * Get the current gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void get_gamma(GammaRamps<uint8_t>* ramps)
+    {
+      __LIBGAMMA_GET_GAMMA(8);
+    }
+    
+    /**
+     * Get the current gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void get_gamma(GammaRamps<uint16_t>* ramps)
+    {
+      __LIBGAMMA_GET_GAMMA(16);
+    }
+    
+    /**
+     * Get the current gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void get_gamma(GammaRamps<uint32_t>* ramps)
+    {
+      __LIBGAMMA_GET_GAMMA(32);
+    }
+    
+    /**
+     * Get the current gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void get_gamma(GammaRamps<uint64_t>* ramps)
+    {
+      __LIBGAMMA_GET_GAMMA(64);
+    }
+    
+    /**
+     * Get the current gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void get_gamma(GammaRamps<float>* ramps)
+    {
+      __LIBGAMMA_GET_GAMMA(f);
+    }
+    
+    /**
+     * Get the current gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void get_gamma(GammaRamps<double>* ramps)
+    {
+      __LIBGAMMA_GET_GAMMA(d);
+    }
+    
+#undef __LIBGAMMA_GET_GAMMA
+    
+#define __LIBGAMMA_SET_GAMMA(AFFIX)						\
+    libgamma_gamma_ramps ## AFFIX ## _t native;					\
+    int r;									\
+    native.red = ramps->red.ramp;						\
+    native.green = ramps->green.ramp;						\
+    native.blue = ramps->blue.ramp;						\
+    native.red_size = ramps->red.size;						\
+    native.green_size = ramps->green.size;					\
+    native.blue_size = ramps->blue.size;					\
+    r = libgamma_crtc_set_gamma_ramps ## AFFIX(this->native, native);		\
+    if (r != 0)									\
+      throw create_error(r)
+    
+    /**
+     * Set gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void set_gamma(GammaRamps<uint8_t>* ramps)
+    {
+      __LIBGAMMA_SET_GAMMA(8);
+    }
+    
+    /**
+     * Set gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void set_gamma(GammaRamps<uint16_t>* ramps)
+    {
+      __LIBGAMMA_SET_GAMMA(16);
+    }
+    
+    /**
+     * Set gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void set_gamma(GammaRamps<uint32_t>* ramps)
+    {
+      __LIBGAMMA_SET_GAMMA(32);
+    }
+    
+    /**
+     * Set gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void set_gamma(GammaRamps<uint64_t>* ramps)
+    {
+      __LIBGAMMA_SET_GAMMA(64);
+    }
+    
+    /**
+     * Set gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void set_gamma(GammaRamps<float>* ramps)
+    {
+      __LIBGAMMA_SET_GAMMA(f);
+    }
+    
+    /**
+     * Set gamma ramps for the CRTC.
+     * 
+     * @param  ramps  The gamma ramps to fill with the current values.
+     */
+    void set_gamma(GammaRamps<double>* ramps)
+    {
+      __LIBGAMMA_SET_GAMMA(d);
+    }
+    
+#undef __LIBGAMMA_SET_GAMMA
     
     
     

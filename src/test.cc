@@ -175,6 +175,23 @@ int main(void)
   delete partition;
   delete site;
   
+  try
+    {
+      throw libgamma::create_error(EIO);
+    }
+  catch (const libgamma::LibgammaException& err)
+    {
+      std::cout << err.what() << std::endl;
+    }
+  try
+    {
+      throw libgamma::create_error(LIBGAMMA_NO_SUCH_ADJUSTMENT_METHOD);
+    }
+  catch (const libgamma::LibgammaException& err)
+    {
+      std::cout << err.what() << std::endl;
+    }
+  
   return 0;
 }
 

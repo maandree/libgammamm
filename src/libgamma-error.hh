@@ -20,6 +20,7 @@
 
 
 #include <string>
+#include <exception>
 
 #include "libgamma-native.hh"
 
@@ -134,6 +135,48 @@ namespace libgamma
    * `libgamma::group_gid` cannot be determined.
    */
   extern GroupName group_name;
+  
+  
+  /**
+   * Libgamma exception class.
+   */
+  class LibgammaException : public std::exception
+  {
+  public:
+    /**
+     * Constructor.
+     * 
+     * @param  error_code  The error code.
+     */
+    LibgammaException(int error_code) throw();
+    
+    /**
+     * Destructor.
+     */
+    virtual ~LibgammaException() throw();
+    
+    /**
+     * Get the error as a string.
+     */
+    virtual const char* what() const throw();
+    
+    /**
+     * The error code.
+     */
+    int error_code;
+    
+  };
+  
+  
+  /**
+   * Create an exception from an error code
+   * that may come from `errno.h` or be a
+   * `libgamma` error code.
+   * 
+   * @param   error_code  The error code.
+   * @return              The error object.
+   */
+  LibgammaException create_error(int error_code);
   
 }
 

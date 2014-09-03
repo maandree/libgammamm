@@ -17,19 +17,11 @@
  */
 #include "libgamma-method.hh"
 
+#include "libgamma-error.hh"
+
 #include <cstdlib>
 #include <cstring>
 #include <cerrno>
-
-
-/**
- * TODO temporary
- */
-std::string create_error(int error_code)
-{
-  (void) error_code;
-  return nullptr;
-}
 
 
 namespace libgamma

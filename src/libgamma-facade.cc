@@ -17,6 +17,8 @@
  */
 #include "libgamma-facade.hh"
 
+#include "libgamma-error.hh"
+
 #include <cstdlib>
 
 
@@ -55,7 +57,6 @@ namespace libgamma
     return rc;
   }
   
-  
   /**
    * Check whether an adjustment method is available, non-existing (invalid) methods will be
    * identified as not available under the rationale that the library may be out of date.
@@ -67,7 +68,6 @@ namespace libgamma
   {
     return libgamma_is_method_available(method);
   }
-  
   
   /**
    * Return the capabilities of an adjustment method.
@@ -81,7 +81,6 @@ namespace libgamma
     libgamma_method_capabilities(&caps, method);
     *output = MethodCapabilities(&caps);
   }
-  
   
   /**
    * Return the default site for an adjustment method.
@@ -97,7 +96,6 @@ namespace libgamma
       return nullptr;
     return new std::string(cstr);
   }
-  
   
   /**
    * Return the default variable that determines
@@ -116,6 +114,7 @@ namespace libgamma
       return nullptr;
     return new std::string(cstr);
   }
+  
   
   /**
    * Convert a raw representation of an EDID to a lowercase hexadecimal representation.
@@ -170,6 +169,290 @@ namespace libgamma
   {
     const char* cstr = edid.c_str();
     return libgamma_unhex_edid(cstr);
+  }
+  
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps8_initialise(GammaRamps<uint8_t>* ramps, size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps8_t native;
+    int r;
+    native.red_size   = ramps->red.size   = red;
+    native.green_size = ramps->green.size = green;
+    native.blue_size  = ramps->blue.size  = blue;
+    ramps->depth = 8;
+    r = libgamma_gamma_ramps8_initialise(&native);
+    if (r != 0)
+      throw create_error(r);
+    ramps->red.ramp   = native.red;
+    ramps->green.ramp = native.green;
+    ramps->blue.ramp  = native.blue;
+  }
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps16_initialise(GammaRamps<uint16_t>* ramps, size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps16_t native;
+    int r;
+    native.red_size   = ramps->red.size   = red;
+    native.green_size = ramps->green.size = green;
+    native.blue_size  = ramps->blue.size  = blue;
+    ramps->depth = 16;
+    r = libgamma_gamma_ramps16_initialise(&native);
+    if (r != 0)
+      throw create_error(r);
+    ramps->red.ramp   = native.red;
+    ramps->green.ramp = native.green;
+    ramps->blue.ramp  = native.blue;
+  }
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps32_initialise(GammaRamps<uint32_t>* ramps, size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps32_t native;
+    int r;
+    native.red_size   = ramps->red.size   = red;
+    native.green_size = ramps->green.size = green;
+    native.blue_size  = ramps->blue.size  = blue;
+    ramps->depth = 32;
+    r = libgamma_gamma_ramps32_initialise(&native);
+    if (r != 0)
+      throw create_error(r);
+    ramps->red.ramp   = native.red;
+    ramps->green.ramp = native.green;
+    ramps->blue.ramp  = native.blue;
+  }
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps64_initialise(GammaRamps<uint64_t>* ramps, size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps64_t native;
+    int r;
+    native.red_size   = ramps->red.size   = red;
+    native.green_size = ramps->green.size = green;
+    native.blue_size  = ramps->blue.size  = blue;
+    ramps->depth = 64;
+    r = libgamma_gamma_ramps64_initialise(&native);
+    if (r != 0)
+      throw create_error(r);
+    ramps->red.ramp   = native.red;
+    ramps->green.ramp = native.green;
+    ramps->blue.ramp  = native.blue;
+  }
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_rampsf_initialise(GammaRamps<float>* ramps, size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_rampsf_t native;
+    int r;
+    native.red_size   = ramps->red.size   = red;
+    native.green_size = ramps->green.size = green;
+    native.blue_size  = ramps->blue.size  = blue;
+    ramps->depth = -1;
+    r = libgamma_gamma_rampsf_initialise(&native);
+    if (r != 0)
+      throw create_error(r);
+    ramps->red.ramp   = native.red;
+    ramps->green.ramp = native.green;
+    ramps->blue.ramp  = native.blue;
+  }
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_rampsd_initialise(GammaRamps<double>* ramps, size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_rampsd_t native;
+    int r;
+    native.red_size   = ramps->red.size   = red;
+    native.green_size = ramps->green.size = green;
+    native.blue_size  = ramps->blue.size  = blue;
+    ramps->depth = -2;
+    r = libgamma_gamma_rampsd_initialise(&native);
+    if (r != 0)
+      throw create_error(r);
+    ramps->red.ramp   = native.red;
+    ramps->green.ramp = native.green;
+    ramps->blue.ramp  = native.blue;
+  }
+  
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint8_t>* gamma_ramps8_create(size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps8_t ramps;
+    int r;
+    ramps.red_size = red;
+    ramps.green_size = green;
+    ramps.blue_size = blue;
+    r = libgamma_gamma_ramps8_initialise(&ramps);
+    if (r != 0)
+      throw create_error(r);
+    return new GammaRamps<uint8_t>(ramps.red, ramps.green, ramps.blue, red, green, blue, 8);
+  }
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint16_t>* gamma_ramps16_create(size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps16_t ramps;
+    int r;
+    ramps.red_size = red;
+    ramps.green_size = green;
+    ramps.blue_size = blue;
+    r = libgamma_gamma_ramps16_initialise(&ramps);
+    if (r != 0)
+      throw create_error(r);
+    return new GammaRamps<uint16_t>(ramps.red, ramps.green, ramps.blue, red, green, blue, 16);
+  }
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint32_t>* gamma_ramps32_create(size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps32_t ramps;
+    int r;
+    ramps.red_size = red;
+    ramps.green_size = green;
+    ramps.blue_size = blue;
+    r = libgamma_gamma_ramps32_initialise(&ramps);
+    if (r != 0)
+      throw create_error(r);
+    return new GammaRamps<uint32_t>(ramps.red, ramps.green, ramps.blue, red, green, blue, 32);
+  }
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint64_t>* gamma_ramps64_create(size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_ramps64_t ramps;
+    int r;
+    ramps.red_size = red;
+    ramps.green_size = green;
+    ramps.blue_size = blue;
+    r = libgamma_gamma_ramps64_initialise(&ramps);
+    if (r != 0)
+      throw create_error(r);
+    return new GammaRamps<uint64_t>(ramps.red, ramps.green, ramps.blue, red, green, blue, 64);
+  }
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<float>* gamma_rampsf_create(size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_rampsf_t ramps;
+    int r;
+    ramps.red_size = red;
+    ramps.green_size = green;
+    ramps.blue_size = blue;
+    r = libgamma_gamma_rampsf_initialise(&ramps);
+    if (r != 0)
+      throw create_error(r);
+    return new GammaRamps<float>(ramps.red, ramps.green, ramps.blue, red, green, blue, -1);
+  }
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<double>* gamma_rampsd_create(size_t red, size_t blue, size_t green)
+  {
+    libgamma_gamma_rampsd_t ramps;
+    int r;
+    ramps.red_size = red;
+    ramps.green_size = green;
+    ramps.blue_size = blue;
+    r = libgamma_gamma_rampsd_initialise(&ramps);
+    if (r != 0)
+      throw create_error(r);
+    return new GammaRamps<double>(ramps.red, ramps.green, ramps.blue, red, green, blue, -2);
   }
   
 }

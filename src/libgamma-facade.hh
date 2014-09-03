@@ -79,6 +79,7 @@ namespace libgamma
    */
   std::string* method_default_site_variable(int method);
   
+  
   /**
    * Convert a raw representation of an EDID to a lowercase hexadecimal representation.
    * 
@@ -114,6 +115,140 @@ namespace libgamma
    *                of `edid` (the input value).
    */
   unsigned char* unhex_edid(const std::string edid);
+  
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps8_initialise(GammaRamps<uint8_t>* ramps, size_t red, size_t blue, size_t green);
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps16_initialise(GammaRamps<uint16_t>* ramps, size_t red, size_t blue, size_t green);
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps32_initialise(GammaRamps<uint32_t>* ramps, size_t red, size_t blue, size_t green);
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_ramps64_initialise(GammaRamps<uint64_t>* ramps, size_t red, size_t blue, size_t green);
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_rampsf_initialise(GammaRamps<float>* ramps, size_t red, size_t blue, size_t green);
+  
+  /**
+   * Initialise a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param  ramps  The gamma ramp to initialise.
+   * @param  red    The size of the gamma ramp for the red channel.
+   * @param  green  The size of the gamma ramp for the green channel.
+   * @param  blue   The size of the gamma ramp for the blue channel.
+   */
+  void gamma_rampsd_initialise(GammaRamps<double>* ramps, size_t red, size_t blue, size_t green);
+  
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint8_t>* gamma_ramps8_create(size_t red, size_t blue, size_t green);
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint16_t>* gamma_ramps16_create(size_t red, size_t blue, size_t green);
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint32_t>* gamma_ramps32_create(size_t red, size_t blue, size_t green);
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<uint64_t>* gamma_ramps64_create(size_t red, size_t blue, size_t green);
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<float>* gamma_rampsf_create(size_t red, size_t blue, size_t green);
+  
+  /**
+   * Create a gamma ramp in the proper way that allows all adjustment
+   * methods to read from and write to it without causing segmentation violation.
+   * 
+   * @param   red    The size of the gamma ramp for the red channel.
+   * @param   green  The size of the gamma ramp for the green channel.
+   * @param   blue   The size of the gamma ramp for the blue channel.
+   * @return         The gamma ramp.
+   */
+  GammaRamps<double>* gamma_rampsd_create(size_t red, size_t blue, size_t green);
   
 }
 
