@@ -185,5 +185,9 @@ namespace libgamma
 }
 
 
+#ifndef __GCC__
+# undef __attribute__
+#endif
+
 #endif
 

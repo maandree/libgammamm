@@ -30,6 +30,11 @@ extern "C"
 # include <libgamma.h>
 # undef this
 # undef restrict
+# ifndef __GCC__
+#  ifdef __attribute__
+#   undef __attribute__
+#  endif
+# endif
 }
 
 
