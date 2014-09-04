@@ -26,6 +26,12 @@
 #include "libgamma-error.hh"
 
 
+#ifndef __GCC__
+# define __attribute__(X) /* emtpy */
+#endif
+
+
+
 namespace libgamma
 {
   /**
@@ -102,7 +108,7 @@ namespace libgamma
     /**
      * Destructor.
      */
-    ~MethodCapabilities();
+    ~MethodCapabilities() __attribute__((const));
     
     /**
      * Copy operator.

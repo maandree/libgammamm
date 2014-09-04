@@ -25,6 +25,10 @@
 #include "libgamma-native.hh"
 
 
+#ifndef __GCC__
+# define __attribute__(X) /* emtpy */
+#endif
+
 
 #ifndef __WIN32__
 # define libgamma_gid_t  gid_t
@@ -82,7 +86,7 @@ namespace libgamma
    * @return        The error code, zero if the name is `nullptr`
    *                or does not refer to a `libgamma` error.
    */
-  int value_of_error(const std::string* name);
+  int value_of_error(const std::string* name) __attribute__((pure));
   
   
   /**
@@ -122,9 +126,9 @@ namespace libgamma
       return *this;
     }
     
-    operator char*() const
+    operator const char*() const
     {
-      return (char*)libgamma_group_name;
+      return libgamma_group_name;
     }
   };
   

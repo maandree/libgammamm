@@ -26,6 +26,12 @@
 #include "libgamma-method.hh"
 
 
+#ifndef __GCC__
+# define __attribute__(X) /* emtpy */
+#endif
+
+
+
 namespace libgamma
 {
   /**
@@ -49,7 +55,7 @@ namespace libgamma
    * @param   method  The adjustment method.
    * @return          Whether the adjustment method is available.
    */
-  int is_method_available(int method);
+  int is_method_available(int method) __attribute__((const));
   
   /**
    * Return the capabilities of an adjustment method.
