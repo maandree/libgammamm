@@ -8,10 +8,14 @@
 PREFIX ?= /usr
 # The library path excluding prefix
 LIB ?= /lib
+# The library header path excluding prefix.
+INCLUDE ?= /include
 # The resource path excluding prefix
 DATA ?= /share
 # The library path including prefix
 LIBDIR ?= $(PREFIX)$(LIB)
+# The library header including prefix.
+INCLUDEDIR ?= $(PREFIX)$(INCLUDE)
 # The resource path including prefix
 DATADIR ?= $(PREFIX)$(DATA)
 # The generic documentation path including prefix
@@ -90,13 +94,27 @@ CXX_FLAGS = $(foreach D,$(DEFS),-D$(D)) -std=$(STD) \
 LD_FLAGS = -lgamma -std=$(STD) $(OPTIMISE) $(LDFLAGS) $(WARN)
 
 
+# Header files
+HEADERS = libgamma libgamma-error libgamma-facade libgamma-method libgamma-native
 
-.PHONY: all
-all: bin/libgammamm.so bin/test
 
-bin/libgammamm.so: obj/libgamma-error.o obj/libgamma-facade.o obj/libgamma-method.o
+
+.PHONY: all lib test
+all: lib test
+lib: bin/libgammamm.$(SO).$(LIB_VERSION)
+test: bin/test
+
+bin/libgammamm.$(SO).$(LIB_VERSION): obj/libgamma-error.o obj/libgamma-facade.o obj/libgamma-method.o
 	@mkdir -p bin
 	$(CXX) $(LD_FLAGS) $(SHARED) $(LDSO) -o $@ $^
+
+bin/libgammamm.$(SO).$(LIB_MAJOR):
+	@mkdir -p bin
+	ln -sf libgammamm.$(SO).$(LIB_VERSION) $@
+
+bin/libgammamm.$(SO):
+	@mkdir -p bin
+	ln -sf libgammamm.$(SO).$(LIB_VERSION) $@
 
 bin/test: obj/test.o obj/libgamma-error.o obj/libgamma-facade.o obj/libgamma-method.o
 	$(CXX) $(LD_FLAGS) -o $@ $^
@@ -104,6 +122,56 @@ bin/test: obj/test.o obj/libgamma-error.o obj/libgamma-facade.o obj/libgamma-met
 obj/%.o: src/%.cc src/*.hh
 	@mkdir -p obj
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
+
+
+
+.PHONY: install
+install: install-base
+
+.PHONY: install
+install-all: install-base
+
+.PHONY: install-base
+install-base: install-lib install-include install-copyright
+
+
+.PHONY: install-lib
+install-lib: bin/libgammamm.$(SO).$(LIB_VERSION)
+	install -dm755 -- "$(DESTDIR)$(LIBDIR)"
+	install -m755 $< -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO).$(LIB_VERSION)"
+	ln -sf libgammamm.$(SO).$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO).$(LIB_MAJOR)"
+	ln -sf libgammamm.$(SO).$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO)"
+
+.PHONY: install-include
+install-include:
+	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)"
+	install -m644 $(foreach H,$(HEADERS),src/$(H).hh) -- "$(DESTDIR)$(INCLUDEDIR)"
+
+
+.PHONY: install-copyright
+install-copyright: install-copying install-license
+
+.PHONY: install-copying
+install-copying:
+	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
+	install -m644 COPYING -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
+
+.PHONY: install-license
+install-license:
+	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
+	install -m644 LICENSE -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
+
+
+
+.PHONY: uninstall
+uninstall:
+	-rm -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO).$(LIB_VERSION)"
+	-rm -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO).$(LIB_MAJOR)"
+	-rm -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO)"
+	-rm -- $(foreach H,$(HEADERS),"$(DESTDIR)$(INCLUDEDIR)/$(H).hh")
+	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
+	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
+	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
 
 
 
