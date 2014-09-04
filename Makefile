@@ -14,8 +14,10 @@ INCLUDE ?= /include
 DATA ?= /share
 # The library path including prefix
 LIBDIR ?= $(PREFIX)$(LIB)
-# The library header including prefix.
+# The library header path including prefix.
 INCLUDEDIR ?= $(PREFIX)$(INCLUDE)
+# The pkg-config file path including prefix.
+PKGCONFIGDIR ?= $(LIBDIR)/pkgconfig
 # The resource path including prefix
 DATADIR ?= $(PREFIX)$(DATA)
 # The generic documentation path including prefix
@@ -132,7 +134,7 @@ install: install-base
 install-all: install-base
 
 .PHONY: install-base
-install-base: install-lib install-include install-copyright
+install-base: install-lib install-include install-pc install-copyright
 
 
 .PHONY: install-lib
@@ -146,6 +148,11 @@ install-lib: bin/libgammamm.$(SO).$(LIB_VERSION)
 install-include:
 	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)"
 	install -m644 $(foreach H,$(HEADERS),src/$(H).hh) -- "$(DESTDIR)$(INCLUDEDIR)"
+
+.PHONY: install-pc
+install-pc:
+	install -dm755 -- "$(DESTDIR)$(PKGCONFIGDIR)"
+	install -m644 libgammamm.pc -- "$(DESTDIR)$(PKGCONFIGDIR)"
 
 
 .PHONY: install-copyright
@@ -169,6 +176,7 @@ uninstall:
 	-rm -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO).$(LIB_MAJOR)"
 	-rm -- "$(DESTDIR)$(LIBDIR)/libgammamm.$(SO)"
 	-rm -- $(foreach H,$(HEADERS),"$(DESTDIR)$(INCLUDEDIR)/$(H).hh")
+	-rm -- "$(DESTDIR)$(PKGCONFIGDIR)/libgammamm.pc"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
