@@ -131,5 +131,20 @@ namespace libgamma
     return LibgammaException(error_code);
   }
   
+  
+  /**
+   * Group that the user needs to be a member of if
+   * `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
+   */
+  GroupGid group_gid;
+  
+  /**
+   * Group that the user needs to be a member of if
+   * `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
+   * `nullptr` if the name of the group
+   * `libgamma::group_gid` cannot be determined.
+   */
+  GroupName group_name;
+  
 }
 

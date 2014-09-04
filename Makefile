@@ -101,7 +101,7 @@ HEADERS = libgamma libgamma-error libgamma-facade libgamma-method libgamma-nativ
 
 .PHONY: all lib test
 all: lib test
-lib: bin/libgammamm.$(SO).$(LIB_VERSION)
+lib: bin/libgammamm.$(SO).$(LIB_VERSION) bin/libgammamm.$(SO).$(LIB_MAJOR) bin/libgammamm.$(SO)
 test: bin/test
 
 bin/libgammamm.$(SO).$(LIB_VERSION): obj/libgamma-error.o obj/libgamma-facade.o obj/libgamma-method.o

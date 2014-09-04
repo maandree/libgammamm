@@ -132,7 +132,7 @@ namespace libgamma
     }
   };
   
-  /** 
+  /**
    * Group that the user needs to be a member of if
    * `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
    * `nullptr` if the name of the group
