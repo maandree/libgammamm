@@ -65,9 +65,9 @@ PIC = -fPIC
 endif
 endif
 
-# The C standard for C code compilation
+# The C++ standard for C++ code compilation
 STD = c++11
-# Optimisation settings for C code compilation
+# Optimisation settings for C++ code compilation
 OPTIMISE ?= -Og -g
 # Definitions for CPP, remove __GCC__ if you are not using g++
 DEFS = __GCC__
