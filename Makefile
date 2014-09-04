@@ -68,7 +68,7 @@ DEFS = __GCC__
 
 # Warning flags, set to empty if you are not using GCC
 WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self       \
-       -Wmissing-include-dirs -Wtrampolines -Wfloat-equal                      \
+       -Wmissing-include-dirs -Wtrampolines -Wfloat-equal -Wshadow             \
        -Wmissing-declarations -Wredundant-decls -Winline -Wno-variadic-macros  \
        -Weffc++ -Wc++11-compat -Wzero-as-null-pointer-constant -Wuseless-cast  \
        -Wsync-nand -Wunsafe-loop-optimizations -Wcast-align -Wstrict-overflow  \
@@ -78,7 +78,7 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self       \
        -Wsuggest-attribute=format -Wnormalized=nfkc -Wconversion               \
        -fstrict-aliasing -fstrict-overflow -fipa-pure-const -ftree-vrp         \
        -fstack-usage -funsafe-loop-optimizations
-# ignored: -Waggregate-return -Wshadow
+# ignored: -Waggregate-return
 
 
 

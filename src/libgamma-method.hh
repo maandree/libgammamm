@@ -521,13 +521,13 @@ namespace libgamma
     /**
      * Constructor.
      * 
-     * @param  ramp  The ramp.
-     * @param  size  The size of the ramp.
+     * @param  native_ramp  The ramp.
+     * @param  ramp_size    The size of the ramp.
      */
-    Ramp(T* ramp, size_t size)
+    Ramp(T* native_ramp, size_t ramp_size)
     {
-      this->ramp = ramp;
-      this->size = size;
+      this->ramp = native_ramp;
+      this->size = ramp_size;
     }
     
     /**
@@ -597,20 +597,21 @@ namespace libgamma
     /**
      * Constructor.
      * 
-     * @param  red         The red gamma ramp.
-     * @param  green       The green gamma ramp.
-     * @param  blue        The blue gamma ramp.
-     * @param  red_size    The size of the gamma ramp for the red channel.
-     * @param  green_size  The size of the gamma ramp for the green channel.
-     * @param  blue_size   The size of the gamma ramp for the blue channel.
-     * @param  depth       The bit-depth of the gamma ramps, -1 for single precision
-     *                     floating point, and -2 for double precision floating point.
+     * @param  red_ramp     The red gamma ramp.
+     * @param  green_ramp   The green gamma ramp.
+     * @param  blue_ramp    The blue gamma ramp.
+     * @param  red_size     The size of the gamma ramp for the red channel.
+     * @param  green_size   The size of the gamma ramp for the green channel.
+     * @param  blue_size    The size of the gamma ramp for the blue channel.
+     * @param  gamma_depth  The bit-depth of the gamma ramps, -1 for single precision
+     *                      floating point, and -2 for double precision floating point.
      */
-    GammaRamps(T* red, T* green, T* blue, size_t red_size, size_t green_size, size_t blue_size, signed depth) :
-      red(Ramp<T>(red, red_size)),
-      green(Ramp<T>(green, green_size)),
-      blue(Ramp<T>(blue, blue_size)),
-      depth(depth)
+    GammaRamps(T* red_ramp, T* green_ramp, T* blue_ramp,
+	       size_t red_size, size_t green_size, size_t blue_size, signed gamma_depth) :
+      red(Ramp<T>(red_ramp, red_size)),
+      green(Ramp<T>(green_ramp, green_size)),
+      blue(Ramp<T>(blue_ramp, blue_size)),
+      depth(gamma_depth)
     {
       /* Do nothing. */
     }
@@ -838,15 +839,15 @@ namespace libgamma
     bool information(CRTCInformation* output, int32_t fields);
     
 #define __LIBGAMMA_GET_GAMMA(AFFIX)						\
-    libgamma_gamma_ramps ## AFFIX ## _t native;					\
+    libgamma_gamma_ramps ## AFFIX ## _t ramps_;					\
     int r;									\
-    native.red = ramps->red.ramp;						\
-    native.green = ramps->green.ramp;						\
-    native.blue = ramps->blue.ramp;						\
-    native.red_size = ramps->red.size;						\
-    native.green_size = ramps->green.size;					\
-    native.blue_size = ramps->blue.size;					\
-    r = libgamma_crtc_get_gamma_ramps ## AFFIX(this->native, &native);		\
+    ramps_.red = ramps->red.ramp;						\
+    ramps_.green = ramps->green.ramp;						\
+    ramps_.blue = ramps->blue.ramp;						\
+    ramps_.red_size = ramps->red.size;						\
+    ramps_.green_size = ramps->green.size;					\
+    ramps_.blue_size = ramps->blue.size;					\
+    r = libgamma_crtc_get_gamma_ramps ## AFFIX(this->native, &ramps_);		\
     if (r != 0)									\
       throw create_error(r)
     
@@ -913,15 +914,15 @@ namespace libgamma
 #undef __LIBGAMMA_GET_GAMMA
     
 #define __LIBGAMMA_SET_GAMMA(AFFIX)						\
-    libgamma_gamma_ramps ## AFFIX ## _t native;					\
+    libgamma_gamma_ramps ## AFFIX ## _t ramps_;					\
     int r;									\
-    native.red = ramps->red.ramp;						\
-    native.green = ramps->green.ramp;						\
-    native.blue = ramps->blue.ramp;						\
-    native.red_size = ramps->red.size;						\
-    native.green_size = ramps->green.size;					\
-    native.blue_size = ramps->blue.size;					\
-    r = libgamma_crtc_set_gamma_ramps ## AFFIX(this->native, native);		\
+    ramps_.red = ramps->red.ramp;						\
+    ramps_.green = ramps->green.ramp;						\
+    ramps_.blue = ramps->blue.ramp;						\
+    ramps_.red_size = ramps->red.size;						\
+    ramps_.green_size = ramps->green.size;					\
+    ramps_.blue_size = ramps->blue.size;					\
+    r = libgamma_crtc_set_gamma_ramps ## AFFIX(this->native, ramps_);		\
     if (r != 0)									\
       throw create_error(r)
     

@@ -75,7 +75,12 @@ namespace libgamma
     return libgamma_value_of_error(cstr);
   }
   
-  
+
+#ifdef __GCC__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wshadow"
+#endif
+
   /**
    * Constructor.
    * 
@@ -105,6 +110,10 @@ namespace libgamma
     else
       return strerror(this->error_code);
   }
+  
+#ifdef __GCC__
+# pragma GCC diagnostic pop
+#endif
   
   
   /**

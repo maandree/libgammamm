@@ -332,7 +332,10 @@ namespace libgamma
     return *this;
   }
   
-  
+#ifdef __GCC__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wshadow"
+#endif
   
   /**
    * Constructor.
@@ -539,6 +542,10 @@ namespace libgamma
     *output = CRTCInformation(&info);
     return r != 0;
   }
+  
+#ifdef __GCC__
+# pragma GCC diagnostic pop
+#endif
   
 }
 
