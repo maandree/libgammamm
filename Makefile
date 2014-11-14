@@ -89,11 +89,10 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self       \
 
 
 # Flags to use when compiling
-CXX_FLAGS = $(foreach D,$(DEFS),-D$(D)) -std=$(STD) \
-            $(OPTIMISE) $(CXXFLAGS) $(PIC) $(CPPFLAGS) $(WARN)
+CXX_FLAGS = $(foreach D,$(DEFS),-D$(D)) -std=$(STD) $(OPTIMISE) $(PIC) $(WARN)
 
 # Flags to use when linking
-LD_FLAGS = -lgamma -std=$(STD) $(OPTIMISE) $(LDFLAGS) $(WARN)
+LD_FLAGS = -lgamma -std=$(STD) $(OPTIMISE) $(WARN)
 
 
 # Header files
@@ -119,11 +118,11 @@ bin/libgammamm.$(SO):
 	ln -sf libgammamm.$(SO).$(LIB_VERSION) $@
 
 bin/test: obj/test.o obj/libgamma-error.o obj/libgamma-facade.o obj/libgamma-method.o
-	$(CXX) $(LD_FLAGS) -o $@ $^
+	$(CXX) $(LD_FLAGS) -o $@ $^ $(LDFLAGS)
 
 obj/%.o: src/%.cc src/*.hh
 	@mkdir -p obj
-	$(CXX) $(CXX_FLAGS) -c -o $@ $<
+	$(CXX) $(CXX_FLAGS) -c -o $@ $< $(CXXFLAGS) $(CPPFLAGS)
 
 
 
