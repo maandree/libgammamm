@@ -1,9 +1,4 @@
-_/
-bin/
-obj/
-\#*\#
-.*
-!.git*
+*\#*
 *~
 *.bak
 *.swp
@@ -12,4 +7,9 @@ obj/
 *.gch
 *.out
 *.o
-
+*.lo
+*.so
+*.so.*
+*.dll
+*.dylib
+/test

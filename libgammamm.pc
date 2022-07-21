@@ -8,4 +8,3 @@ Description: Display server abstraction layer for gamma ramps for C++
 Version: 1.0
 Libs: -L${libdir} -lgammamm -lgamma
 Cflags: -I${includedir}
-
