@@ -13,11 +13,14 @@ LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
 LIB_NAME = gammamm
 
 
-HDR =\
+LIBHDR =\
 	libgamma.hh\
 	libgamma-error.hh\
 	libgamma-facade.hh\
-	libgamma-method.hh\
+	libgamma-method.hh
+
+HDR =\
+	$(LIBHDR)\
 	libgamma-native.hh
 
 OBJ =\
@@ -31,7 +34,7 @@ LOBJ = $(OBJ:.o=.lo)
 all: libgammamm.a libgammamm.$(LIBEXT)
 $(OBJ): $(HDR)
 $(LOBJ): $(HDR)
-test.o: test.cc $(HDR)
+test.o: test.cc $(LIBHDR)
 
 libgammamm.a: $(OBJ)
 	@rm -f -- $@
@@ -59,7 +62,7 @@ install: libgammamm.a libgammamm.$(LIBEXT)
 	$(FIX_INSTALL_NAME) "$(DESTDIR)$(PREFIX)/lib/libgammamm.$(LIBMINOREXT)"
 	ln -sf -- libgammamm.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libgammamm.$(LIBMAJOREXT)"
 	ln -sf -- libgammamm.$(LIBMAJOREXT) "$(DESTDIR)$(PREFIX)/lib/libgammamm.$(LIBEXT)"
-	cp -- $(HDR) "$(DESTDIR)$(PREFIX)/include/"
+	cp -- $(LIBHDR) "$(DESTDIR)$(PREFIX)/include/"
 
 uninstall:
 	mkdir -p -- "$(DESTDIR)$(PREFIX)/lib"
@@ -68,7 +71,7 @@ uninstall:
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libgammamm.$(LIBMINOREXT)"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libgammamm.$(LIBMAJOREXT)"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libgammamm.$(LIBEXT)"
-	-cd "$(DESTDIR)$(PREFIX)/include/" && rm -f -- $(HDR)
+	-cd "$(DESTDIR)$(PREFIX)/include/" && rm -f -- $(LIBHDR)
 	-rm -- "$(DESTDIR)$(PKGCONFIGDIR)/libgammamm.pc"
 
 run-test:

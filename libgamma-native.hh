@@ -2,7 +2,6 @@
 #ifndef LIBGAMMA_NATIVE_HH
 #define LIBGAMMA_NATIVE_HH
 
-
 extern "C"
 {
 # ifdef __GNUC__
@@ -21,6 +20,4 @@ extern "C"
 # endif
 }
 
-
 #endif
-
