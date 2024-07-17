@@ -64,7 +64,9 @@ namespace libgamma
 	method_capabilities(MethodCapabilities *output, int method)
 	{
 		struct libgamma_method_capabilities caps;
-		libgamma_method_capabilities(&caps, sizeof(caps), method);
+		int r = libgamma_method_capabilities(&caps, sizeof(caps), method);
+		if (r < 0)
+			throw create_error(r);
 		*output = MethodCapabilities(&caps);
 	}
 
