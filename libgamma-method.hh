@@ -72,7 +72,7 @@ namespace libgamma
 		 * 
 		 * @param  caps  The information in the native structure
 		 */
-		MethodCapabilities(libgamma_method_capabilities_t *caps);
+		MethodCapabilities(const struct libgamma_method_capabilities *caps);
 
 		/**
 		 * Copy constructor
@@ -95,7 +95,7 @@ namespace libgamma
 
 
 		/**
-		 * OR of the CRTC information fields in `libgamma_crtc_information_t`
+		 * OR of the CRTC information fields in `libgamma_crtc_information`
 		 * that may (but can fail) be read successfully
 		 */
 		int32_t crtc_information;
@@ -146,20 +146,20 @@ namespace libgamma
 
 		/**
 		 * Whether the `red_gamma_size`, `green_gamma_size` and `blue_gamma_size`
-		 * fields in `libgamma_crtc_information_t` will always have the same
+		 * fields in `libgamma_crtc_information` will always have the same
 		 * values as each other for the adjustment method
 		 */
 		bool identical_gamma_sizes;
 
 		/**
 		 * Whether the `red_gamma_size`, `green_gamma_size` and `blue_gamma_size`
-		 * fields in `libgamma_crtc_information_t` will always be filled with the
+		 * fields in `libgamma_crtc_information` will always be filled with the
 		 * same value for the adjustment method
 		 */
 		bool fixed_gamma_size;
 
 		/**
-		 * Whether the `gamma_depth` field in `libgamma_crtc_information_t`
+		 * Whether the `gamma_depth` field in `libgamma_crtc_information`
 		 * will always be filled with the same value for the adjustment method
 		 */
 		bool fixed_gamma_depth;
@@ -179,13 +179,13 @@ namespace libgamma
 	/**
 	 * Types for connectors
 	 */
-	typedef libgamma_connector_type_t ConnectorType;
+	typedef libgamma_connector_type ConnectorType;
 
 	/**
 	 * Orders for subpixels; currently the possible values are
 	 * very biased to LCD, Plasma and monochrome monitors
 	 */
-	typedef libgamma_subpixel_order_t SubpixelOrder;
+	typedef libgamma_subpixel_order SubpixelOrder;
 
 
 	/**
@@ -204,7 +204,7 @@ namespace libgamma
 		 * 
 		 * @param  info  The information in the native structure
 		 */
-		CRTCInformation(libgamma_crtc_information_t *info);
+		CRTCInformation(libgamma_crtc_information *info);
 
 		/**
 		 * Copy constructor
@@ -675,7 +675,7 @@ namespace libgamma
 		/**
 		 * The state in the native structure
 		 */
-		libgamma_site_state_t *native;
+		libgamma_site_state *native;
 	};
 
 
@@ -738,7 +738,7 @@ namespace libgamma
 		/**
 		 * The state in the native structure
 		 */
-		libgamma_partition_state_t *native;
+		libgamma_partition_state *native;
 	};
 
 
@@ -786,7 +786,7 @@ namespace libgamma
 		bool information(CRTCInformation *output, int32_t fields);
 
 #define LIBGAMMAMM_GET_GAMMA__(AFFIX)\
-		libgamma_gamma_ramps##AFFIX##_t ramps_;\
+		struct libgamma_gamma_ramps##AFFIX ramps_;\
 		int r;\
 		ramps_.red = ramps->red.ramp;\
 		ramps_.green = ramps->green.ramp;\
@@ -865,7 +865,7 @@ namespace libgamma
 #undef LIBGAMMAMM_GET_GAMMA__
 
 #define LIBGAMMAMM_SET_GAMMA__(AFFIX)\
-		libgamma_gamma_ramps##AFFIX##_t ramps_;\
+		struct libgamma_gamma_ramps##AFFIX ramps_;\
 		int r;\
 		ramps_.red = ramps->red.ramp;\
 		ramps_.green = ramps->green.ramp;\
@@ -873,7 +873,7 @@ namespace libgamma
 		ramps_.red_size = ramps->red.size;\
 		ramps_.green_size = ramps->green.size;\
 		ramps_.blue_size = ramps->blue.size;\
-		r = libgamma_crtc_set_gamma_ramps##AFFIX(this->native, ramps_);\
+		r = libgamma_crtc_set_gamma_ramps##AFFIX(this->native, &ramps_);\
 		if (r)\
 			throw create_error(r)
 
@@ -959,7 +959,7 @@ namespace libgamma
 		/**
 		 * The state in the native structure
 		 */
-		libgamma_crtc_state_t *native;
+		libgamma_crtc_state *native;
 	};
 
 #ifdef __GNUC__

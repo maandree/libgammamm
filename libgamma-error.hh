@@ -82,13 +82,13 @@ namespace libgamma
 		const GroupGid &
 		operator =(const libgamma_gid_t &value) const
 		{
-			libgamma_group_gid = value;
+			libgamma_group_gid_set(value);
 			return *this;
 		}
 
 		operator libgamma_gid_t() const
 		{
-			return libgamma_group_gid;
+			return libgamma_group_gid_get();
 		}
 	};
 
@@ -108,13 +108,13 @@ namespace libgamma
 		const GroupName &
 		operator =(const char *value) const
 		{
-			libgamma_group_name = value;
+			libgamma_group_name_set(value);
 			return *this;
 		}
 
 		operator const char *() const
 		{
-			return libgamma_group_name;
+			return libgamma_group_name_get();
 		}
 	};
 

@@ -35,7 +35,7 @@ namespace libgamma
 	 * 
 	 * @param  caps  The information in the native structure
 	 */
-	MethodCapabilities::MethodCapabilities(libgamma_method_capabilities_t *caps) :
+	MethodCapabilities::MethodCapabilities(const struct libgamma_method_capabilities *caps) :
 		crtc_information(caps->crtc_information),
 		default_site_known(caps->default_site_known),
 		multiple_sites(caps->multiple_sites),
@@ -158,7 +158,7 @@ namespace libgamma
 	 * 
 	 * @param  info  The information in the native structure
 	 */
-	CRTCInformation::CRTCInformation(libgamma_crtc_information_t *info) :
+	CRTCInformation::CRTCInformation(libgamma_crtc_information *info) :
 		edid(info->edid),
 		edid_length(info->edid_length),
 		edid_error(info->edid_error),
@@ -341,7 +341,7 @@ namespace libgamma
 			cstr = (char *)malloc((strlen(cstr_) + 1) * sizeof(char));
 			memcpy(cstr, cstr_, (strlen(cstr_) + 1) * sizeof(char));
 		}
-		this->native = (libgamma_site_state_t*)malloc(sizeof(libgamma_site_state_t));
+		this->native = (libgamma_site_state*)malloc(sizeof(libgamma_site_state));
 		r = libgamma_site_initialise(this->native, method, cstr);
 		if (r < 0) {
 			int saved_errno = errno;
@@ -401,7 +401,7 @@ namespace libgamma
 		native(nullptr)
 	{
 		int r;
-		this->native = (libgamma_partition_state_t*)malloc(sizeof(libgamma_partition_state_t));
+		this->native = (libgamma_partition_state*)malloc(sizeof(libgamma_partition_state));
 		r = libgamma_partition_initialise(this->native, site->native, partition);
 		if (r < 0) {
 			int saved_errno = errno;
@@ -458,7 +458,7 @@ namespace libgamma
 		native(nullptr)
 	{
 		int r;
-		this->native = (libgamma_crtc_state_t *)malloc(sizeof(libgamma_crtc_state_t));
+		this->native = (libgamma_crtc_state *)malloc(sizeof(libgamma_crtc_state));
 		r = libgamma_crtc_initialise(this->native, partition->native, crtc);
 		if (r < 0) {
 			int saved_errno = errno;
@@ -500,8 +500,8 @@ namespace libgamma
 	bool
 	CRTC::information(CRTCInformation *output, int32_t fields)
 	{
-		libgamma_crtc_information_t info;
-		int r = libgamma_get_crtc_information(&info, this->native, fields);
+		libgamma_crtc_information info;
+		int r = libgamma_get_crtc_information(&info, sizeof(info), this->native, fields);
 		*output = CRTCInformation(&info);
 		return r != 0;
 	}

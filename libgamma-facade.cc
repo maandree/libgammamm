@@ -21,15 +21,17 @@ namespace libgamma
 	std::vector<int>
 	list_methods(int operation)
 	{
-		int *methods = (int*)malloc(LIBGAMMA_METHOD_COUNT * sizeof(int));
-		size_t n, i;
+		int *methods = (int *)malloc(LIBGAMMA_METHOD_COUNT * sizeof(int));
+		size_t n, m, i;
 		std::vector<int> rc;
 
 		n = libgamma_list_methods(methods, LIBGAMMA_METHOD_COUNT, operation);
 		if (n > LIBGAMMA_METHOD_COUNT) {
 			free(methods);
-			methods = (int*)malloc(n * sizeof(int));
-			libgamma_list_methods(methods, n, operation);
+			methods = (int *)malloc(n * sizeof(int));
+			m = libgamma_list_methods(methods, n, operation);
+			if (m < n)
+				n = m;
 		}
 
 		for (i = 0; i < n; i++)
@@ -61,8 +63,8 @@ namespace libgamma
 	void
 	method_capabilities(MethodCapabilities *output, int method)
 	{
-		libgamma_method_capabilities_t caps;
-		libgamma_method_capabilities(&caps, method);
+		struct libgamma_method_capabilities caps;
+		libgamma_method_capabilities(&caps, sizeof(caps), method);
 		*output = MethodCapabilities(&caps);
 	}
 
@@ -76,7 +78,7 @@ namespace libgamma
 	std::string *
 	method_default_site(int method)
 	{
-		char *cstr = libgamma_method_default_site(method);
+		const char *cstr = libgamma_method_default_site(method);
 		if (cstr == nullptr)
 			return nullptr;
 		return new std::string(cstr);
@@ -172,7 +174,7 @@ namespace libgamma
 	void
 	gamma_ramps8_initialise(GammaRamps<uint8_t> *ramps, size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps8_t native;
+		struct libgamma_gamma_ramps8 native;
 		int r;
 		native.red_size   = ramps->red.size   = red;
 		native.green_size = ramps->green.size = green;
@@ -198,7 +200,7 @@ namespace libgamma
 	void
 	gamma_ramps16_initialise(GammaRamps<uint16_t> *ramps, size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps16_t native;
+		struct libgamma_gamma_ramps16 native;
 		int r;
 		native.red_size   = ramps->red.size   = red;
 		native.green_size = ramps->green.size = green;
@@ -224,7 +226,7 @@ namespace libgamma
 	void
 	gamma_ramps32_initialise(GammaRamps<uint32_t> *ramps, size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps32_t native;
+		struct libgamma_gamma_ramps32 native;
 		int r;
 		native.red_size   = ramps->red.size   = red;
 		native.green_size = ramps->green.size = green;
@@ -250,7 +252,7 @@ namespace libgamma
 	void
 	gamma_ramps64_initialise(GammaRamps<uint64_t> *ramps, size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps64_t native;
+		struct libgamma_gamma_ramps64 native;
 		int r;
 		native.red_size   = ramps->red.size   = red;
 		native.green_size = ramps->green.size = green;
@@ -276,7 +278,7 @@ namespace libgamma
 	void
 	gamma_rampsf_initialise(GammaRamps<float> *ramps, size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_rampsf_t native;
+		struct libgamma_gamma_rampsf native;
 		int r;
 		native.red_size   = ramps->red.size   = red;
 		native.green_size = ramps->green.size = green;
@@ -302,7 +304,7 @@ namespace libgamma
 	void
 	gamma_rampsd_initialise(GammaRamps<double> *ramps, size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_rampsd_t native;
+		struct libgamma_gamma_rampsd native;
 		int r;
 		native.red_size   = ramps->red.size   = red;
 		native.green_size = ramps->green.size = green;
@@ -328,7 +330,7 @@ namespace libgamma
 	GammaRamps<uint8_t> *
 	gamma_ramps8_create(size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps8_t ramps;
+		struct libgamma_gamma_ramps8 ramps;
 		int r;
 		ramps.red_size = red;
 		ramps.green_size = green;
@@ -351,7 +353,7 @@ namespace libgamma
 	GammaRamps<uint16_t> *
 	gamma_ramps16_create(size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps16_t ramps;
+		struct libgamma_gamma_ramps16 ramps;
 		int r;
 		ramps.red_size = red;
 		ramps.green_size = green;
@@ -374,7 +376,7 @@ namespace libgamma
 	GammaRamps<uint32_t> *
 	gamma_ramps32_create(size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps32_t ramps;
+		struct libgamma_gamma_ramps32 ramps;
 		int r;
 		ramps.red_size = red;
 		ramps.green_size = green;
@@ -397,7 +399,7 @@ namespace libgamma
 	GammaRamps<uint64_t> *
 	gamma_ramps64_create(size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_ramps64_t ramps;
+		struct libgamma_gamma_ramps64 ramps;
 		int r;
 		ramps.red_size = red;
 		ramps.green_size = green;
@@ -420,7 +422,7 @@ namespace libgamma
 	GammaRamps<float> *
 	gamma_rampsf_create(size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_rampsf_t ramps;
+		struct libgamma_gamma_rampsf ramps;
 		int r;
 		ramps.red_size = red;
 		ramps.green_size = green;
@@ -443,7 +445,7 @@ namespace libgamma
 	GammaRamps<double> *
 	gamma_rampsd_create(size_t red, size_t blue, size_t green)
 	{
-		libgamma_gamma_rampsd_t ramps;
+		struct libgamma_gamma_rampsd ramps;
 		int r;
 		ramps.red_size = red;
 		ramps.green_size = green;
