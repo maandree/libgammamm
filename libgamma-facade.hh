@@ -63,7 +63,7 @@ namespace libgamma
    * the default site for an adjustment method
    * 
    * @param   method  The adjustment method (display server and protocol)
-   * @return          The environ variables that is used to determine the
+   * @return          The environment variables that is used to determine the
    *                  default site. `nullptr` if there is none, that is, if
    *                  the method does not support multiple sites
    */

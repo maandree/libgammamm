@@ -64,7 +64,7 @@ namespace libgamma
 	std::string *name_of_error(int value);
 
 	/**
-	 * Return the value of a `libgamma` error definition refered to by name
+	 * Return the value of a `libgamma` error definition referred to by name
 	 * 
 	 * @param   name  The name of the definition associated with the error code
 	 * @return        The error code, zero if the name is `nullptr`

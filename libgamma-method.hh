@@ -25,7 +25,7 @@ namespace libgamma
 	 * Site state
 	 * 
 	 * On operating systems that integrate a graphical environment
-	 * there is usually just one site. However, one systems with
+	 * there is usually just one site. However, on systems with
 	 * pluggable graphics, like Unix-like systems such as GNU/Linux
 	 * and the BSD:s, there can usually be any (feasible) number of
 	 * sites. In X.org parlance they are called displays.
@@ -36,7 +36,7 @@ namespace libgamma
 	 * Partition state
 	 * 
 	 * Probably the majority of display server only one partition
-	 * per site. However, X.org can, and traditional used to have
+	 * per site. However, X.org can, and traditionally used to have
 	 * on multi-headed environments, multiple partitions per site.
 	 * In X.org partitions are called 'screens'. It is not to be
 	 * confused with monitor. A screen is a collection of monitors,
@@ -229,7 +229,7 @@ namespace libgamma
 		/**
 		 * The Extended Display Identification Data associated with
 		 * the attached monitor. This is raw byte array that is usually
-		 * 128 bytes long. It is not NUL-terminate, rather its length
+		 * 128 bytes long. It is not NUL-terminated, rather its length
 		 * is stored in `edid_length`.
 		 */
 		unsigned char *edid;
@@ -610,7 +610,7 @@ namespace libgamma
 	 * Site state
 	 * 
 	 * On operating systems that integrate a graphical environment
-	 * there is usually just one site. However, one systems with
+	 * there is usually just one site. However, on systems with
 	 * pluggable graphics, like Unix-like systems such as GNU/Linux
 	 * and the BSD:s, there can usually be any (feasible) number of
 	 * sites. In X.org parlance they are called displays.
@@ -662,7 +662,7 @@ namespace libgamma
 		/**
 		 * The number of partitions that is available on this site.
 		 * Probably the majority of display server only one partition
-		 * per site. However, X.org can, and traditional used to have
+		 * per site. However, X.org can, and traditionally used to have
 		 * on multi-headed environments, multiple partitions per site.
 		 * In X.org partitions are called 'screens'. It is not to be
 		 * confused with monitor. A screen is a collection of monitors,
@@ -683,7 +683,7 @@ namespace libgamma
 	 * Partition state
 	 * 
 	 * Probably the majority of display server only one partition
-	 * per site. However, X.org can, and traditional used to have
+	 * per site. However, X.org can, and traditionally used to have
 	 * on multi-headed environments, multiple partitions per site.
 	 * In X.org partitions are called 'screens'. It is not to be
 	 * confused with monitor. A screen is a collection of monitors,
